@@ -1,13 +1,18 @@
 package com.teles.tabelafipe.principal;
 
+import com.teles.tabelafipe.model.Data;
+import com.teles.tabelafipe.service.ConvertData;
 import com.teles.tabelafipe.service.FetchApi;
 
+import java.util.Comparator;
 import java.util.Scanner;
 
 public class Principal {
     private Scanner read = new Scanner(System.in);
-    private final String URL_BASE = "https://parallelum.com.br/fipe/api/v1/";
     private FetchApi fetchApi = new FetchApi();
+    private ConvertData converter = new ConvertData();
+
+    private final String URL_BASE = "https://parallelum.com.br/fipe/api/v1/";
 
     public void showMenu() {
         var menu = """
@@ -34,5 +39,14 @@ public class Principal {
 
         var json = fetchApi.getData(address);
         System.out.println(json);
+
+        var brand = converter.getList(json, Data.class);
+
+        brand.stream()
+                .sorted(Comparator.comparing(Data::code))
+                .forEach(System.out::println);
+
+        System.out.println("Informe o código da marca para consulta: ");
+        var brandCode = read.nextLine();
     }
 }
